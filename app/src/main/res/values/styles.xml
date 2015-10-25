@@ -1,0 +1,69 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- Styles for the main fragment movie overlays -->
+    <style name="MovieOverlays">
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:shadowColor">@color/movieYearOverlayShadowColor</item>
+    </style>
+
+    <style name="MovieYearOverlay" parent="MovieOverlays">
+        <item name="android:textColor">@color/movieYearOverlayTextColor</item>
+        <item name="android:textSize">@dimen/text_title_size</item>
+    </style>
+
+    <style name="MovieRatingOverlay" parent="MovieOverlays">
+        <item name="android:textColor">@color/movieRatingOverlayTextColor</item>
+        <item name="android:textSize">@dimen/text_display1_size</item>
+    </style>
+
+    <!-- Styles for the movie detail fragment -->
+    <style name="MovieDetailTitle">
+        <item name="android:paddingLeft">@dimen/movie_detail_padding</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">@dimen/text_display1_size</item>
+    </style>
+
+    <style name="MovieDetail">
+        <item name="android:paddingTop">@dimen/movie_detail_padding</item>
+        <item name="android:paddingLeft">@dimen/movie_detail_padding</item>
+        <item name="android:paddingRight">@dimen/movie_detail_padding</item>
+    </style>
+
+    <style name="MovieDetailImage" parent="MovieDetail" />
+
+    <style name="MovieDetailTextViewYear" parent="MovieDetail">
+        <item name="android:textSize">@dimen/movie_detail_text_view_year</item>
+    </style>
+
+    <style name="MovieDetailTextViewRating">
+        <item name="android:textSize">@dimen/text_subheading_size_device</item>
+        <item name="android:paddingLeft">@dimen/movie_detail_padding</item>
+    </style>
+
+    <style name="MovieDetailTextViewSynopsis" parent="MovieDetail" />
+
+    <style name="FragmentMainGridView">
+        <item name="android:numColumns">2</item>
+    </style>
+
+</resources>

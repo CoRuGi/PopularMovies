@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/grid_item_movie_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/layout_poster_height"
+        android:contentDescription="@string/grid_item_movie_image_descritpion"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/grid_item_movie_year"
+        style="@style/MovieYearOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center_horizontal"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/grid_item_movie_rating"
+        style="@style/MovieRatingOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

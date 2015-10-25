@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <!-- Name of our action to see and set our settings [CHAR LIMIT=20] -->
+    <string name="action_settings">Settings</string>
+
+    <!-- Title of the settings activity [CHAR LIMIT=20] -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Description of the movie posters -->
+    <string name="grid_item_movie_image_descritpion" translate="false">Poster of the movie</string>
+
+    <!-- Sort by Settings -->
+    <!-- Label for the sortby preference [CHAR LIMIT=30] -->
+    <string name="pref_sortby_label">Sort order</string>
+    <!-- Label for most popular option in sortby preference [CHAR LIMIT=25] -->
+    <string name="pref_sortby_label_most_popular">Most popular</string>
+    <!-- Label for highest-rated option in sortby preference [CHAR LIMIT=25] -->
+    <string name="pref_sortby_label_highest_rated">Highest-rated</string>
+    <!-- Key name for storing sortby in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_sortby_key" translate="false">sortby</string>
+    <!-- Value in SharedPreferences for most popular sort option [CHAR LIMIT=NONE] -->
+    <string name="pref_sortby_most_popular" translate="false">popularity.desc</string>
+    <!-- Value in SharedPreferences for highest rated sort option [CHAR LIMIT=NONE] -->
+    <string name="pref_sortby_highest_rated" translate="false">vote_average.desc</string>
+
+    <!-- Title of the Details activity [CHAR LIMIT=20] -->
+    <string name="title_activity_detail">Movie Details</string>
+    <string name="movie_detail_image_view_background_description" translate="false">Movie background</string>
+
+    <!-- Extra information settings -->
+    <!-- Label for the Extra information preference [CHAR LIMIT=30] -->
+    <string name="pref_extrainformation_label">Extra Information</string>
+    <!-- Ley name for storing extra information in SharePreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_extrainformation_key" translate="false">extrainformation</string>
+
+</resources>
