@@ -179,6 +179,6 @@ public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Arra
                 parentActivity.addToMovieInformationAdapter(movie);
             }
         }
-        parentActivity.progressDialog.dismiss();
+        parentActivity.mProgressDialog.dismiss();
     }
 }

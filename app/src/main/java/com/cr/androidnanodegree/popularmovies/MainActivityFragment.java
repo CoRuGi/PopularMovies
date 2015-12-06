@@ -1,7 +1,6 @@
 package com.cr.androidnanodegree.popularmovies;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,11 +19,10 @@ import java.util.ArrayList;
  */
 public class MainActivityFragment extends Fragment {
 
-    public MovieInformationAdapter movieInformationAdapter;
-    public ProgressDialog progressDialog;
-    public Context context;
-    protected String storedSortByPreference;
-    protected Boolean storedExtraInformationPreference;
+    public MovieInformationAdapter mMovieInformationAdapter;
+    public ProgressDialog mProgressDialog;
+    protected String mStoredSortByPreference;
+    protected Boolean mStoredExtraInformationPreference;
 
     public MainActivityFragment() {
     }
@@ -33,20 +31,19 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        context = getContext();
 
         // Store the settings to know if they changed during our lifecycle
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        storedSortByPreference = sharedPreferences.getString(
+        mStoredSortByPreference = sharedPreferences.getString(
                 getString(R.string.pref_sortby_key),
                 getString(R.string.pref_sortby_most_popular)
         );
-        storedExtraInformationPreference = sharedPreferences.getBoolean(
+        mStoredExtraInformationPreference = sharedPreferences.getBoolean(
                 getString(R.string.pref_extrainformation_key),
                 true
         );
 
-        movieInformationAdapter = new MovieInformationAdapter(
+        mMovieInformationAdapter = new MovieInformationAdapter(
                 getContext(), R.layout.grid_item_movie, new ArrayList<MovieInformation>()
         );
 
@@ -54,14 +51,14 @@ public class MainActivityFragment extends Fragment {
         GridView gridView = (GridView) rootView.findViewById(
                 R.id.gridview_movies
         );
-        gridView.setAdapter(movieInformationAdapter);
+        gridView.setAdapter(mMovieInformationAdapter);
 
         // When a movie is selected start the DetailActivity
         gridView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        MovieInformation movieInformation = movieInformationAdapter.getItem(position);
+                        MovieInformation movieInformation = mMovieInformationAdapter.getItem(position);
                         Intent intent = new Intent(getContext(), DetailActivity.class)
                                 .putExtra("MovieInformation", movieInformation);
                         startActivity(intent);
@@ -73,12 +70,12 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void updateMoviesGrid() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Loading movies...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setProgress(0);
-        progressDialog.setMax(100);
-        progressDialog.show();
+        mProgressDialog = new ProgressDialog(getContext());
+        mProgressDialog.setMessage("Loading movies...");
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setProgress(0);
+        mProgressDialog.setMax(100);
+        mProgressDialog.show();
 
         // Get the API key from ApiKeyProvider
         String apiKey = ApiKeyProvider.getApiKey();
@@ -118,24 +115,24 @@ public class MainActivityFragment extends Fragment {
                 true
         );
 
-        // If the movieInformationAdapter is already filled we don't need to update it
-        if (movieInformationAdapter.getCount() <= 2) {
+        // If the mMovieInformationAdapter is already filled we don't need to update it
+        if (mMovieInformationAdapter.getCount() <= 2) {
             updateMoviesGrid();
         }
 
         // If one of the settings has changed we need to call updateMoviesGrid
-        if (!sortByPreference.equals(storedSortByPreference) ||
-                !storedExtraInformationPreference.equals(extraInformationPreference)
+        if (!sortByPreference.equals(mStoredSortByPreference) ||
+                !mStoredExtraInformationPreference.equals(extraInformationPreference)
                 ) {
             updateMoviesGrid();
         }
     }
 
     public void addToMovieInformationAdapter(MovieInformation movieInformation) {
-        movieInformationAdapter.add(movieInformation);
+        mMovieInformationAdapter.add(movieInformation);
     }
 
     public void clearMovieInformationAdapter() {
-        movieInformationAdapter.clear();
+        mMovieInformationAdapter.clear();
     }
 }
