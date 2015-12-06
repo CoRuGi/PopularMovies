@@ -20,11 +20,11 @@
             android:id="@+id/detail_movie_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:contentDescription="@string/movie_detail_image_view_background_description" />
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/movie_detail_image_view_background_description"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
             android:id="@+id/detail_movie_linear_layout"
@@ -49,6 +49,12 @@
                 <TextView
                     android:id="@+id/detail_movie_year"
                     style="@style/MovieDetailTextViewYear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/detail_movie_runtime"
+                    style="@style/MovieDetailTextViewRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
