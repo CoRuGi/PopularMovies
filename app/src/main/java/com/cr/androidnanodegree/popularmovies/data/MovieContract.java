@@ -1,5 +1,6 @@
 package com.cr.androidnanodegree.popularmovies.data;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -23,6 +24,10 @@ public class MovieContract {
         public static final Uri CONTENT_URI =
                 BASE_CONENT_URI.buildUpon().appendEncodedPath(PATH_FAVORITES).build();
 
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
+                        PATH_FAVORITES;
+        
         // Table name
         public static final String TABLE_NAME = "favorites";
 
