@@ -42,5 +42,6 @@
     <string name="pref_extrainformation_label">Extra Information</string>
     <!-- Ley name for storing extra information in SharePreferences [CHAR LIMIT=NONE] -->
     <string name="pref_extrainformation_key" translate="false">extrainformation</string>
+    <string name="fragment_detail_button_text">Mark as favorite</string>
 
 </resources>

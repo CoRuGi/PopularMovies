@@ -64,6 +64,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
+                <Button
+                    android:id="@+id/fragment_detail_button_favorite"
+                    android:text="@string/fragment_detail_button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
 
         </LinearLayout>

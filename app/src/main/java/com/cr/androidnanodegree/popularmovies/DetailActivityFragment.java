@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.net.URL;
  */
 public class DetailActivityFragment extends Fragment {
 
+    private final static String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     protected MovieInformation movieInformation;
 
     public DetailActivityFragment() {
@@ -37,6 +40,13 @@ public class DetailActivityFragment extends Fragment {
         FetchMovieDetailTask movieDetailTask = new FetchMovieDetailTask(this);
         movieDetailTask.execute(Integer.parseInt(movieInformation.getId()));
 
+        Button button = (Button) rootView.findViewById(R.id.fragment_detail_button_favorite);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onMarkAsFavoriteClick(v);
+            }
+        });
+        
         TextView title = (TextView) rootView.findViewById(R.id.detail_movie_title);
         TextView year = (TextView) rootView.findViewById(R.id.detail_movie_year);
         TextView average = (TextView) rootView.findViewById(R.id.detail_movie_average_rating);
@@ -71,5 +81,9 @@ public class DetailActivityFragment extends Fragment {
             backgroundImageView.setImageAlpha(50);
         }
         return rootView;
+    }
+
+    public void onMarkAsFavoriteClick(View view) {
+        Log.d(LOG_TAG,"Button pressed!");
     }
 }
