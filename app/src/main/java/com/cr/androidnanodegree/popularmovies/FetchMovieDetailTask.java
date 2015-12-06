@@ -122,6 +122,9 @@ public class FetchMovieDetailTask extends AsyncTask<Integer, Void, Integer> {
     protected void onPostExecute(Integer runtime) {
         TextView runtimeView =
                 (TextView) parentActivity.getActivity().findViewById(R.id.detail_movie_runtime);
-        runtimeView.setText(runtime);
+        runtimeView.setText(String.format(
+                parentActivity.getActivity().getString(R.string.fragment_detail_text_view_duration),
+                runtime)
+        );
     }
 }
