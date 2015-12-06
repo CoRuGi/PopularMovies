@@ -20,7 +20,9 @@ public class MovieDetailUrlProvider {
             "https://api.themoviedb.org/3/movie";
     final String API_KEY_PARAM = "api_key";
 
-    public URL getMoviesUrl(String apiKey, int id) {
+    public URL getMoviesUrl(int id) {
+        String apiKey = ApiKeyProvider.getApiKey();
+
         //Construct the URL for the API query
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                 .appendEncodedPath(Integer.toString(id))
