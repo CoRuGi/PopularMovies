@@ -24,7 +24,7 @@ public class MovieContract {
                 BASE_CONENT_URI.buildUpon().appendEncodedPath(PATH_FAVORITES).build();
 
         // Table name
-        public static final String COLUMN_TABLE_NAME = "favorites";
+        public static final String TABLE_NAME = "favorites";
 
         // ID of the movie
         public static final String COLUMN_MOVIE_ID = "movie_id";
