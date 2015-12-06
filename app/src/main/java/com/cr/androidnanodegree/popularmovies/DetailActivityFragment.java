@@ -34,6 +34,9 @@ public class DetailActivityFragment extends Fragment {
             movieInformation = intent.getParcelableExtra("MovieInformation");
         }
 
+        FetchMovieDetailTask movieDetailTask = new FetchMovieDetailTask(this);
+        movieDetailTask.execute(Integer.parseInt(movieInformation.getId()));
+
         TextView title = (TextView) rootView.findViewById(R.id.detail_movie_title);
         TextView year = (TextView) rootView.findViewById(R.id.detail_movie_year);
         TextView average = (TextView) rootView.findViewById(R.id.detail_movie_average_rating);
