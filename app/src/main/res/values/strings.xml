@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Popular Movies</string>
 
     <!-- Name of our action to see and set our settings [CHAR LIMIT=20] -->
@@ -9,6 +9,15 @@
 
     <!-- Description of the movie posters -->
     <string name="grid_item_movie_image_descritpion" translate="false">Poster of the movie</string>
+
+
+    <!-- Movie Detail strings -->
+    <!-- Movie Duration string -->
+    <string name="fragment_detail_text_view_duration"><xliff:g id="duration">%d</xliff:g> min
+    </string>
+    <!-- Movie rating string -->
+    <string name="fragment_detail_text_view_rating"><xliff:g id="rating">%1.0f</xliff:g>/10
+    </string>
 
     <!-- Sort by Settings -->
     <!-- Label for the sortby preference [CHAR LIMIT=30] -->
