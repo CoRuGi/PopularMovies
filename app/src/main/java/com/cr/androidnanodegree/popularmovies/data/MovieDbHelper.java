@@ -23,14 +23,14 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create the table to hold favorites.
         final String SQL_CREATE_FAVORITES_TABLE =
-                "CREATE TABLE" + FavoritesEntry.TABLE_NAME + " (" +
+                "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " (" +
                         FavoritesEntry._ID + " INTEGER PRIMARY KEY, " +
                         FavoritesEntry.COLUMN_MOVIE_ID + " REAL UNIQUE NOT NULL, " +
-                        FavoritesEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL," +
-                        FavoritesEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL," +
-                        FavoritesEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL," +
-                        FavoritesEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL," +
-                        FavoritesEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL," +
+                        FavoritesEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                        FavoritesEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                        FavoritesEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL, " +
+                        FavoritesEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
+                        FavoritesEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                         FavoritesEntry.COLUMN_BACKDROP_PATH + " TEXT NOT NULL" +
                         " );";
 
