@@ -1,6 +1,8 @@
 <resources xmlns:xliff="http://schemas.android.com/tools">
     <string name="app_name">Popular Movies</string>
 
+    <string name="content_authority">com.cr.androidnanodegree.popularmovies</string>
+
     <!-- Name of our action to see and set our settings [CHAR LIMIT=20] -->
     <string name="action_settings">Settings</string>
 
