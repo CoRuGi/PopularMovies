@@ -34,8 +34,23 @@ public class MovieContract {
         // ID of the movie
         public static final String COLUMN_MOVIE_ID = "movie_id";
 
+        // Title of the movie
+        public static final String COLUMN_MOVIE_TITLE = "movie_title";
+
         // Path to the poster
         public static final String COLUMN_POSTER_PATH = "poster_path";
+
+        // Synopsis of the movie
+        public static final String COLUMN_MOVIE_SYNOPSIS = "movie_synopsis";
+
+        // Vote average of the movie
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+
+        // Release date of the movie
+        public static final String COLUMN_RELEASE_DATE = "relaese_date";
+
+        // Path to the backdrop
+        public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
 
         public static Uri buildFavoritesUri(long movieId) {
             return ContentUris.withAppendedId(CONTENT_URI, movieId);
