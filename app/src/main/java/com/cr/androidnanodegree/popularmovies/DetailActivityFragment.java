@@ -1,6 +1,8 @@
 package com.cr.androidnanodegree.popularmovies;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.cr.androidnanodegree.popularmovies.data.MovieContract.FavoritesEntry;
 
 import java.net.URL;
 
@@ -84,6 +87,33 @@ public class DetailActivityFragment extends Fragment {
     }
 
     public void onMarkAsFavoriteClick(View view) {
-        Log.d(LOG_TAG,"Button pressed!");
+        Log.d(LOG_TAG, "Button pressed!");
+
+        // Check if the movie is already in the database
+        Cursor cursor = getContext().getContentResolver().query(
+                FavoritesEntry.CONTENT_URI,
+                new String[] {FavoritesEntry.COLUMN_MOVIE_ID, FavoritesEntry.COLUMN_MOVIE_ID},
+                FavoritesEntry.COLUMN_MOVIE_ID + " = ?",
+                new String[] {movieInformation.getId()},
+                null
+        );
+
+        // If movie is already in the database we don't have to add it
+        if (cursor.moveToFirst()) {
+            return;
+        }
+
+        // Prepare the values to be entered into the database
+        ContentValues values = new ContentValues();
+
+        values.put(FavoritesEntry.COLUMN_MOVIE_ID, movieInformation.getId());
+        values.put(FavoritesEntry.COLUMN_MOVIE_TITLE, movieInformation.getTitle());
+        values.put(FavoritesEntry.COLUMN_POSTER_PATH, movieInformation.getPosterPath());
+        values.put(FavoritesEntry.COLUMN_MOVIE_SYNOPSIS, movieInformation.getSynopsis());
+        values.put(FavoritesEntry.COLUMN_VOTE_AVERAGE, movieInformation.getVoteAverage());
+        values.put(FavoritesEntry.COLUMN_RELEASE_DATE, movieInformation.getReleaseDate());
+        values.put(FavoritesEntry.COLUMN_BACKDROP_PATH, movieInformation.getBackdropPath());
+
+        getContext().getContentResolver().insert(FavoritesEntry.CONTENT_URI, values);
     }
 }
