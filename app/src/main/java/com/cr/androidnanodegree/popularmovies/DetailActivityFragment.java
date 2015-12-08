@@ -115,5 +115,11 @@ public class DetailActivityFragment extends Fragment {
         values.put(FavoritesEntry.COLUMN_BACKDROP_PATH, movieInformation.getBackdropPath());
 
         getContext().getContentResolver().insert(FavoritesEntry.CONTENT_URI, values);
+
+        Button button = (Button) view.findViewById(R.id.fragment_detail_button_favorite);
+        button.setText(R.string.fragment_detail_button_text_marked);
+        button.setClickable(false);
+
+        cursor.close();
     }
 }
