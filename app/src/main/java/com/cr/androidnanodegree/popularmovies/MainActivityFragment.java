@@ -3,26 +3,57 @@ package com.cr.androidnanodegree.popularmovies;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+
+import com.cr.androidnanodegree.popularmovies.data.MovieContract;
 
 import java.util.ArrayList;
 
 /**
  * Fragment to show the poster grid view
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    protected static final int MOVIES_LOADER = 0;
     public MovieInformationAdapter mMovieInformationAdapter;
+    public MovieInformationCursorAdapter mMovieInformationCursorAdapter;
     public ProgressDialog mProgressDialog;
     protected String mStoredSortByPreference;
     protected Boolean mStoredExtraInformationPreference;
+
+    protected final static String[] MOVIES_PROJECTION = {
+            MovieContract.FavoritesEntry._ID,
+            MovieContract.FavoritesEntry.COLUMN_MOVIE_ID,
+            MovieContract.FavoritesEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.FavoritesEntry.COLUMN_POSTER_PATH,
+            MovieContract.FavoritesEntry.COLUMN_MOVIE_SYNOPSIS,
+            MovieContract.FavoritesEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.FavoritesEntry.COLUMN_RELEASE_DATE,
+            MovieContract.FavoritesEntry.COLUMN_BACKDROP_PATH
+    };
+
+    static final int COL_ID = 0;
+    static final int COL_MOVIE_ID = 1;
+    static final int COL_MOVIE_TITLE = 2;
+    static final int COL_POSTER_PATH = 3;
+    static final int COL_MOVIE_SYNOPSIS = 4;
+    static final int COL_VOTE_AVERAGE = 5;
+    static final int COL_RELEASE_DATE = 6;
+    static final int COL_BACKDROP_PATH = 7;
 
     public MainActivityFragment() {
     }
@@ -46,25 +77,65 @@ public class MainActivityFragment extends Fragment {
         mMovieInformationAdapter = new MovieInformationAdapter(
                 getContext(), R.layout.grid_item_movie, new ArrayList<MovieInformation>()
         );
+        mMovieInformationCursorAdapter = new MovieInformationCursorAdapter(
+                getContext(), null, 0
+        );
 
         // Fill the GridView with the data
         GridView gridView = (GridView) rootView.findViewById(
                 R.id.gridview_movies
         );
-        gridView.setAdapter(mMovieInformationAdapter);
 
-        // When a movie is selected start the DetailActivity
-        gridView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        MovieInformation movieInformation = mMovieInformationAdapter.getItem(position);
-                        Intent intent = new Intent(getContext(), DetailActivity.class)
-                                .putExtra("MovieInformation", movieInformation);
-                        startActivity(intent);
+        // When SortBy is set to favorites we need to set the ArrayAdaptor or the cursor adapter
+        if (!mStoredSortByPreference.equals(getString(R.string.pref_sortby_favorites))) {
+            gridView.setAdapter(mMovieInformationAdapter);
+
+            // When a movie is selected start the DetailActivity
+            gridView.setOnItemClickListener(
+                    new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            MovieInformation movieInformation = mMovieInformationAdapter.getItem(position);
+                            Intent intent = new Intent(getContext(), DetailActivity.class)
+                                    .putExtra(
+                                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
+                                            movieInformation
+                                    );
+                            startActivity(intent);
+                        }
                     }
-                }
-        );
+            );
+        } else {
+            gridView.setAdapter(mMovieInformationCursorAdapter);
+
+            gridView.setOnItemClickListener(
+                    new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                            if (cursor != null) {
+                                MovieInformation movieInformation = new MovieInformation();
+                                movieInformation.setId(cursor.getString(COL_MOVIE_ID));
+
+                                ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie_image);
+                                movieInformation.setPoster(imageView.getDrawingCache());
+
+                                movieInformation.setReleaseDate(cursor.getString(COL_RELEASE_DATE));
+                                movieInformation.setSynopsis(cursor.getString(COL_MOVIE_SYNOPSIS));
+                                movieInformation.setVoteAverage(cursor.getString(COL_VOTE_AVERAGE));
+                                movieInformation.setTitle(cursor.getString(COL_MOVIE_TITLE));
+                                movieInformation.setBackdropPath(cursor.getString(COL_BACKDROP_PATH));
+                                Intent intent = new Intent(getContext(), DetailActivity.class)
+                                        .putExtra(
+                                                DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
+                                                movieInformation
+                                        );
+                                startActivity(intent);
+                            }
+                        }
+                    }
+            );
+        }
 
         return rootView;
     }
@@ -115,6 +186,11 @@ public class MainActivityFragment extends Fragment {
                 true
         );
 
+        // If the SortBy Favorites Setting is selected we need to use the CursorLoader
+        if (sortByPreference.equals("favorites")) {
+            getLoaderManager().initLoader(MOVIES_LOADER, null, this);
+        }
+
         // If the mMovieInformationAdapter is already filled we don't need to update it
         if (mMovieInformationAdapter.getCount() <= 2) {
             updateMoviesGrid();
@@ -134,5 +210,26 @@ public class MainActivityFragment extends Fragment {
 
     public void clearMovieInformationAdapter() {
         mMovieInformationAdapter.clear();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri uri = MovieContract.FavoritesEntry.CONTENT_URI;
+
+        return new CursorLoader(getContext(),
+                uri,
+                MOVIES_PROJECTION,
+                null, null, null
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
