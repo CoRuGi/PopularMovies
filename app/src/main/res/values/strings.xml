@@ -28,12 +28,16 @@
     <string name="pref_sortby_label_most_popular">Most popular</string>
     <!-- Label for highest-rated option in sortby preference [CHAR LIMIT=25] -->
     <string name="pref_sortby_label_highest_rated">Highest-rated</string>
+    <!-- Label for favorites option in sortby preference [CHAR LIMIT=25] -->
+    <string name="pref_sortby_label_favorites">Favorites</string>
     <!-- Key name for storing sortby in SharedPreferences [CHAR LIMIT=NONE] -->
     <string name="pref_sortby_key" translate="false">sortby</string>
     <!-- Value in SharedPreferences for most popular sort option [CHAR LIMIT=NONE] -->
     <string name="pref_sortby_most_popular" translate="false">popularity.desc</string>
     <!-- Value in SharedPreferences for highest rated sort option [CHAR LIMIT=NONE] -->
     <string name="pref_sortby_highest_rated" translate="false">vote_average.desc</string>
+    <!-- Value in SharedPreferences for favorites sort option [CHAR LIMIT=NONE] -->
+    <string name="pref_sortby_favorites" translate="false">favorites</string>
 
     <!-- Title of the Details activity [CHAR LIMIT=20] -->
     <string name="title_activity_detail">Movie Details</string>
