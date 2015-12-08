@@ -25,6 +25,7 @@ import java.net.URL;
 public class DetailActivityFragment extends Fragment {
 
     private final static String LOG_TAG = DetailActivityFragment.class.getSimpleName();
+    public static final String MOVIE_INFORMATION_EXTRA = "MovieInformation";
     protected MovieInformation movieInformation;
 
     public DetailActivityFragment() {
@@ -36,8 +37,8 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Intent intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra("MovieInformation")) {
-            movieInformation = intent.getParcelableExtra("MovieInformation");
+        if (intent != null && intent.hasExtra(MOVIE_INFORMATION_EXTRA)) {
+            movieInformation = intent.getParcelableExtra(MOVIE_INFORMATION_EXTRA);
         }
 
         FetchMovieDetailTask movieDetailTask = new FetchMovieDetailTask(this);
