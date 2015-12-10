@@ -1,5 +1,8 @@
 package com.cr.androidnanodegree.popularmovies;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -33,6 +36,13 @@ public class Utility {
         }
 
         return year;
+    }
+
+    public static Boolean getExtraInformationPreference(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean(
+                context.getString(R.string.pref_extrainformation_key), true);
     }
 
 }

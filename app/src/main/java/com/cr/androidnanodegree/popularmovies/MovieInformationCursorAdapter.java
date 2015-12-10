@@ -3,18 +3,13 @@ package com.cr.androidnanodegree.popularmovies;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Cursor adapter for when the favorites option is selected
@@ -39,27 +34,10 @@ public class MovieInformationCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-        Bitmap bitmap;
 
         // Read poster from cursor
-        URL posterUrl = new ImageUrlProvider().getImageUrl(
-                cursor.getString(MainActivityFragment.COL_POSTER_PATH)
-        );
-
-        try {
-            bitmap = Glide.with(context)
-                    .load(posterUrl)
-                    .asBitmap()
-                    .into(550, 825)
-                    .get();
-        } catch (InterruptedException e) {
-            Log.e(LOG_TAG, "InterruptedException: " + e);
-            bitmap = null;
-        } catch (ExecutionException e) {
-            Log.e(LOG_TAG, "ExecutionException: " + e);
-            bitmap = null;
-        }
-
+        byte[] blob = cursor.getBlob(MainActivityFragment.COL_POSTER);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(blob, 0, blob.length);
         viewHolder.poster.setImageBitmap(bitmap);
 
         // Read year from cursor
@@ -70,6 +48,15 @@ public class MovieInformationCursorAdapter extends CursorAdapter {
         // Read rating from cursor
         String rating = cursor.getString(MainActivityFragment.COL_VOTE_AVERAGE);
         viewHolder.movieRating.setText(rating);
+
+        // Show extra information if set to true
+        if (Utility.getExtraInformationPreference(context)) {
+            viewHolder.movieYear.setVisibility(View.VISIBLE);
+            viewHolder.movieRating.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.movieYear.setVisibility(View.VISIBLE);
+            viewHolder.movieRating.setVisibility(View.INVISIBLE);
+        }
     }
 
     public static class ViewHolder {
