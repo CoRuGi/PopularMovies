@@ -27,7 +27,10 @@ public class MovieContract {
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
                         PATH_FAVORITES;
-        
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
+                        PATH_FAVORITES;
+
         // Table name
         public static final String TABLE_NAME = "favorites";
 
@@ -54,6 +57,10 @@ public class MovieContract {
 
         public static Uri buildFavoritesUri(long movieId) {
             return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
+
+        public static long getFavoritesIdFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 }

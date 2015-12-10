@@ -18,12 +18,14 @@ public class MovieProvider extends ContentProvider {
     private MovieDbHelper mOpenHelper;
 
     static final int FAVORITES = 100;
+    static final int FAVORITES_ID = 101;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
         uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES, FAVORITES);
+        uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES + "/#", FAVORITES_ID);
 
         return uriMatcher;
     }
@@ -42,6 +44,8 @@ public class MovieProvider extends ContentProvider {
         switch (match) {
             case FAVORITES:
                 return MovieContract.FavoritesEntry.CONTENT_TYPE;
+            case FAVORITES_ID:
+                return MovieContract.FavoritesEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -59,6 +63,18 @@ public class MovieProvider extends ContentProvider {
                         projection,
                         selection,
                         selectionArgs,
+                        null, null,
+                        sortOrder
+                );
+                break;
+            }
+            case FAVORITES_ID: {
+                long id = MovieContract.FavoritesEntry.getFavoritesIdFromUri(uri);
+                returnCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.FavoritesEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.FavoritesEntry.COLUMN_MOVIE_ID + "= ?",
+                        new String[] {Long.toString(id)},
                         null, null,
                         sortOrder
                 );
