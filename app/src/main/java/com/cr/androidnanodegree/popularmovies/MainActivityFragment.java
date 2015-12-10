@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -115,23 +113,11 @@ public class MainActivityFragment extends Fragment
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                             if (cursor != null) {
-                                MovieInformation movieInformation = new MovieInformation();
-                                movieInformation.setId(cursor.getString(COL_MOVIE_ID));
-
-                                byte[] blob = cursor.getBlob(COL_POSTER);
-                                Bitmap poster = BitmapFactory.decodeByteArray(blob, 0, blob.length);
-                                //movieInformation.setPoster(poster);
-
-                                movieInformation.setReleaseDate(cursor.getString(COL_RELEASE_DATE));
-                                movieInformation.setSynopsis(cursor.getString(COL_MOVIE_SYNOPSIS));
-                                movieInformation.setVoteAverage(cursor.getString(COL_VOTE_AVERAGE));
-                                movieInformation.setTitle(cursor.getString(COL_MOVIE_TITLE));
-                                movieInformation.setBackdropPath(cursor.getString(COL_BACKDROP_PATH));
-                                Intent intent = new Intent(getContext(), DetailActivity.class)
-                                        .putExtra(
-                                                DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
-                                                movieInformation
-                                        );
+                                long movieId = cursor.getLong(COL_MOVIE_ID);
+                                Uri favoritesUri =
+                                        MovieContract.FavoritesEntry.buildFavoritesUri(movieId);
+                                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                                        .setData(favoritesUri);
                                 startActivity(intent);
                             }
                         }
