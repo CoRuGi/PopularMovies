@@ -38,7 +38,7 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_TITLE = "movie_title";
 
         // Path to the poster
-        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_POSTER = "poster";
 
         // Synopsis of the movie
         public static final String COLUMN_MOVIE_SYNOPSIS = "movie_synopsis";
@@ -47,7 +47,7 @@ public class MovieContract {
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
         // Release date of the movie
-        public static final String COLUMN_RELEASE_DATE = "relaese_date";
+        public static final String COLUMN_RELEASE_DATE = "release_date";
 
         // Path to the backdrop
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path";

@@ -3,6 +3,7 @@ package com.cr.androidnanodegree.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.cr.androidnanodegree.popularmovies.data.MovieContract.FavoritesEntry;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
 /**
@@ -109,11 +111,15 @@ public class DetailActivityFragment extends Fragment {
 
         values.put(FavoritesEntry.COLUMN_MOVIE_ID, movieInformation.getId());
         values.put(FavoritesEntry.COLUMN_MOVIE_TITLE, movieInformation.getTitle());
-        values.put(FavoritesEntry.COLUMN_POSTER_PATH, movieInformation.getPosterPath());
         values.put(FavoritesEntry.COLUMN_MOVIE_SYNOPSIS, movieInformation.getSynopsis());
         values.put(FavoritesEntry.COLUMN_VOTE_AVERAGE, movieInformation.getVoteAverage());
         values.put(FavoritesEntry.COLUMN_RELEASE_DATE, movieInformation.getReleaseDate());
         values.put(FavoritesEntry.COLUMN_BACKDROP_PATH, movieInformation.getBackdropPath());
+
+        Bitmap poster = movieInformation.getPoster();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        poster.compress(Bitmap.CompressFormat.PNG, 0 , stream);
+        values.put(FavoritesEntry.COLUMN_POSTER, stream.toByteArray());
 
         getContext().getContentResolver().insert(FavoritesEntry.CONTENT_URI, values);
 

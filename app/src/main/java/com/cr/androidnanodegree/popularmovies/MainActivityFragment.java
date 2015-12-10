@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import com.cr.androidnanodegree.popularmovies.data.MovieContract;
 
@@ -39,7 +40,7 @@ public class MainActivityFragment extends Fragment
             MovieContract.FavoritesEntry._ID,
             MovieContract.FavoritesEntry.COLUMN_MOVIE_ID,
             MovieContract.FavoritesEntry.COLUMN_MOVIE_TITLE,
-            MovieContract.FavoritesEntry.COLUMN_POSTER_PATH,
+            MovieContract.FavoritesEntry.COLUMN_POSTER,
             MovieContract.FavoritesEntry.COLUMN_MOVIE_SYNOPSIS,
             MovieContract.FavoritesEntry.COLUMN_VOTE_AVERAGE,
             MovieContract.FavoritesEntry.COLUMN_RELEASE_DATE,
@@ -49,7 +50,7 @@ public class MainActivityFragment extends Fragment
     static final int COL_ID = 0;
     static final int COL_MOVIE_ID = 1;
     static final int COL_MOVIE_TITLE = 2;
-    static final int COL_POSTER_PATH = 3;
+    static final int COL_POSTER = 3;
     static final int COL_MOVIE_SYNOPSIS = 4;
     static final int COL_VOTE_AVERAGE = 5;
     static final int COL_RELEASE_DATE = 6;
@@ -117,8 +118,9 @@ public class MainActivityFragment extends Fragment
                                 MovieInformation movieInformation = new MovieInformation();
                                 movieInformation.setId(cursor.getString(COL_MOVIE_ID));
 
-                                ImageView imageView = (ImageView) view.findViewById(R.id.grid_item_movie_image);
-                                movieInformation.setPoster(imageView.getDrawingCache());
+                                byte[] blob = cursor.getBlob(COL_POSTER);
+                                Bitmap poster = BitmapFactory.decodeByteArray(blob, 0, blob.length);
+                                //movieInformation.setPoster(poster);
 
                                 movieInformation.setReleaseDate(cursor.getString(COL_RELEASE_DATE));
                                 movieInformation.setSynopsis(cursor.getString(COL_MOVIE_SYNOPSIS));
@@ -189,6 +191,7 @@ public class MainActivityFragment extends Fragment
         // If the SortBy Favorites Setting is selected we need to use the CursorLoader
         if (sortByPreference.equals("favorites")) {
             getLoaderManager().initLoader(MOVIES_LOADER, null, this);
+            return;
         }
 
         // If the mMovieInformationAdapter is already filled we don't need to update it
@@ -225,7 +228,7 @@ public class MainActivityFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        mMovieInformationCursorAdapter.swapCursor(data);
     }
 
     @Override
