@@ -62,6 +62,10 @@
 
     <style name="MovieDetailTextViewSynopsis" parent="MovieDetail" />
 
+    <style name="MovieDetailExtras" parent="MovieDetail">
+        <item name="android:textSize">@dimen/movie_detail_text_view_year</item>
+    </style>
+
     <style name="FragmentMainGridView">
         <item name="android:numColumns">2</item>
     </style>

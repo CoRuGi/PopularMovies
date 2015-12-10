@@ -50,5 +50,7 @@
     <string name="pref_extrainformation_key" translate="false">extrainformation</string>
     <string name="fragment_detail_button_text">Mark as favorite</string>
     <string name="fragment_detail_button_text_marked">Marked as favorite</string>
+    <string name="fragment_detail_trailers_text">Trailers:</string>
+    <string name="fragment_detail_reviews_text">Reviews:</string>
 
 </resources>
