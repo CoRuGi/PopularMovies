@@ -91,6 +91,7 @@ public class DetailActivityFragment extends Fragment {
 
     public void onMarkAsFavoriteClick(View view) {
         Log.d(LOG_TAG, "Button pressed!");
+        Button button = (Button) view.findViewById(R.id.fragment_detail_button_favorite);
 
         // Check if the movie is already in the database
         Cursor cursor = getContext().getContentResolver().query(
@@ -103,6 +104,7 @@ public class DetailActivityFragment extends Fragment {
 
         // If movie is already in the database we don't have to add it
         if (cursor.moveToFirst()) {
+            setButtonMarked(button);
             return;
         }
 
@@ -118,15 +120,18 @@ public class DetailActivityFragment extends Fragment {
 
         Bitmap poster = movieInformation.getPoster();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        poster.compress(Bitmap.CompressFormat.PNG, 0 , stream);
+        poster.compress(Bitmap.CompressFormat.PNG, 0, stream);
         values.put(FavoritesEntry.COLUMN_POSTER, stream.toByteArray());
 
         getContext().getContentResolver().insert(FavoritesEntry.CONTENT_URI, values);
 
-        Button button = (Button) view.findViewById(R.id.fragment_detail_button_favorite);
-        button.setText(R.string.fragment_detail_button_text_marked);
-        button.setClickable(false);
+        setButtonMarked(button);
 
         cursor.close();
+    }
+
+    public void setButtonMarked(Button button) {
+        button.setText(R.string.fragment_detail_button_text_marked);
+        button.setClickable(false);
     }
 }
