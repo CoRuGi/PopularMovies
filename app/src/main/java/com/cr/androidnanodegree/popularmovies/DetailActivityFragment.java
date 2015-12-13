@@ -16,10 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -52,8 +51,8 @@ public class DetailActivityFragment extends Fragment
     protected TextView yearView;
     protected TextView averageView;
     protected TextView synopsisView;
-    protected ListView videosView;
-    protected ListView reviewsView;
+    protected LinearLayout videosView;
+    protected LinearLayout reviewsView;
 
     public DetailActivityFragment() {
     }
@@ -86,8 +85,8 @@ public class DetailActivityFragment extends Fragment
         synopsisView = (TextView) rootView.findViewById(R.id.detail_movie_synopsis);
         posterView = (ImageView) rootView.findViewById(R.id.detail_movie_poster);
         backgroundView = (ImageView) rootView.findViewById(R.id.detail_movie_background);
-        videosView = (ListView) rootView.findViewById(R.id.detail_movie_videos);
-        reviewsView = (ListView) rootView.findViewById(R.id.detail_movie_reviews);
+        videosView = (LinearLayout) rootView.findViewById(R.id.detail_movie_videos);
+        reviewsView = (LinearLayout) rootView.findViewById(R.id.detail_movie_reviews);
 
         Button button = (Button) rootView.findViewById(R.id.fragment_detail_button_favorite);
         button.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +142,9 @@ public class DetailActivityFragment extends Fragment
         mMovieVideosAdapter = new MovieVideosAdapter(
                 getContext(), R.layout.list_item_videos, new ArrayList<ArrayList>()
         );
+
+        // TODO Remove if listView is successful
+        /*
         videosView.setAdapter(mMovieVideosAdapter);
         videosView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
@@ -158,10 +160,14 @@ public class DetailActivityFragment extends Fragment
                     }
                 }
         );
+        */
 
         mMovieReviewsAdapter = new MovieReviewsAdapter(
                 getContext(), R.layout.list_item_reviews, new ArrayList<ArrayList>()
         );
+
+        // TODO Remove if listView is successful
+        /*
         reviewsView.setAdapter(mMovieReviewsAdapter);
         reviewsView.setOnItemClickListener(
                 new AdapterView.OnItemClickListener() {
@@ -177,6 +183,7 @@ public class DetailActivityFragment extends Fragment
                     }
                 }
         );
+        */
 
         return rootView;
     }

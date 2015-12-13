@@ -1,7 +1,14 @@
 package com.cr.androidnanodegree.popularmovies;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,11 +161,36 @@ public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList<Arr
 
     @Override
     protected void onPostExecute(ArrayList<ArrayList> arrayList) {
+        LinearLayout linearLayout =
+                (LinearLayout) parentActivity.getActivity().findViewById(R.id.detail_movie_videos);
+        LayoutInflater layoutInflater = (LayoutInflater) parentActivity.getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (arrayList != null) {
-            parentActivity.clearMovieVideosAdapter();
             for (ArrayList list : arrayList) {
-                Log.d(LOG_TAG, "New list will be send!");
-                parentActivity.addToMovieVideosAdapter(list);
+                View view = layoutInflater.inflate(
+                        R.layout.list_item_videos, null
+                );
+                TextView textView = (TextView) view.findViewById(R.id.detail_movie_list_video_name);
+                final String videoKey = (String) list.get(MOVIE_KEY);
+
+                view.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Uri youtubeLocation = Uri.parse("https://www.youtube.com/watch?v="
+                                        + videoKey);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, youtubeLocation);
+                                if (intent.resolveActivity(
+                                        parentActivity.getActivity().getPackageManager()) != null) {
+                                    parentActivity.startActivity(intent);
+                                }
+                            }
+                        }
+                );
+
+                textView.setText((String) list.get(MOVIE_NAME));
+                linearLayout.addView(view);
             }
         }
     }
