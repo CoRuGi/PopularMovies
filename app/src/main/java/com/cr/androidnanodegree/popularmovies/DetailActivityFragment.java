@@ -16,8 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +27,7 @@ import com.cr.androidnanodegree.popularmovies.data.MovieContract.FavoritesEntry;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -40,6 +43,7 @@ public class DetailActivityFragment extends Fragment
 
     protected MovieInformation movieInformation;
     protected Uri mUri;
+    protected MovieVideosAdapter mMovieVideosAdapter;
 
     protected ImageView posterView;
     protected ImageView backgroundView;
@@ -47,6 +51,8 @@ public class DetailActivityFragment extends Fragment
     protected TextView yearView;
     protected TextView averageView;
     protected TextView synopsisView;
+    protected ListView videosView;
+    protected ListView reviewsView;
 
     public DetailActivityFragment() {
     }
@@ -79,6 +85,8 @@ public class DetailActivityFragment extends Fragment
         synopsisView = (TextView) rootView.findViewById(R.id.detail_movie_synopsis);
         posterView = (ImageView) rootView.findViewById(R.id.detail_movie_poster);
         backgroundView = (ImageView) rootView.findViewById(R.id.detail_movie_background);
+        videosView = (ListView) rootView.findViewById(R.id.detail_movie_videos);
+        reviewsView = (ListView) rootView.findViewById(R.id.detail_movie_reviews);
 
         Button button = (Button) rootView.findViewById(R.id.fragment_detail_button_favorite);
         button.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +103,9 @@ public class DetailActivityFragment extends Fragment
         if (movieInformation != null) {
             FetchMovieDetailTask movieDetailTask = new FetchMovieDetailTask(this);
             movieDetailTask.execute(Integer.parseInt(movieInformation.getId()));
+
+            FetchMovieVideosTask movieVideosTask = new FetchMovieVideosTask(this);
+            movieVideosTask.execute(Integer.parseInt(movieInformation.getId()));
 
             titleView.setText(movieInformation.getTitle());
             yearView.setText(movieInformation.getYearFromReleaseDate());
@@ -124,6 +135,26 @@ public class DetailActivityFragment extends Fragment
         } else {
             backgroundView.setImageAlpha(50);
         }
+
+        mMovieVideosAdapter = new MovieVideosAdapter(
+                getContext(), R.layout.list_item_videos, new ArrayList<ArrayList>()
+        );
+        videosView.setAdapter(mMovieVideosAdapter);
+        videosView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        ArrayList arrayList = mMovieVideosAdapter.getItem(position);
+                        String key = arrayList.get(FetchMovieVideosTask.MOVIE_KEY).toString();
+                        Uri youtubeLocation = Uri.parse("https://www.youtube.com/watch?v=" + key);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, youtubeLocation);
+                        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                }
+        );
+
         return rootView;
     }
 
@@ -234,6 +265,20 @@ public class DetailActivityFragment extends Fragment
             movieDetailTask.execute(Integer.parseInt(
                     data.getString(MainActivityFragment.COL_MOVIE_ID))
             );
+
+            FetchMovieVideosTask movieVideosTask = new FetchMovieVideosTask(this);
+            movieVideosTask.execute(
+                    Integer.parseInt(data.getString(MainActivityFragment.COL_MOVIE_ID))
+            );
         }
+    }
+
+    public void addToMovieVideosAdapter(ArrayList arraylist) {
+        Log.d(LOG_TAG, "New Trailer will be added!");
+        mMovieVideosAdapter.add(arraylist);
+    }
+
+    public void clearMovieVideosAdapter() {
+        mMovieVideosAdapter.clear();
     }
 }

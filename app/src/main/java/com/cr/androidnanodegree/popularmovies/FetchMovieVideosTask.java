@@ -20,11 +20,19 @@ import java.util.ArrayList;
  * <p/>
  * Fetch the movies from the themoviesdb.org website
  */
-public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList> {
+public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList<ArrayList>> {
 
-    MainActivityFragment parentActivity;
+    public static final int MOVIE_ID = 0;
+    public static final int MOVIE_ISO = 1;
+    public static final int MOVIE_KEY = 2;
+    public static final int MOVIE_NAME = 3;
+    public static final int MOVIE_SITE = 4;
+    public static final int MOVIE_SIZE = 5;
+    public static final int MOVIE_TYPE = 6;
 
-    public FetchMovieVideosTask(MainActivityFragment parentActivity) {
+    DetailActivityFragment parentActivity;
+
+    public FetchMovieVideosTask(DetailActivityFragment parentActivity) {
         this.parentActivity = parentActivity;
     }
 
@@ -145,12 +153,13 @@ public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList> {
     }
 
     @Override
-    protected void onPostExecute(ArrayList arrayList) {
-//        if (arrayList != null) {
-//            parentActivity.clearVideosAdapter();
-//            for (MovieInformation video : arrayList) {
-//                parentActivity.addToVideoAdapter(video);
-//            }
-//        }
+    protected void onPostExecute(ArrayList<ArrayList> arrayList) {
+        if (arrayList != null) {
+            parentActivity.clearMovieVideosAdapter();
+            for (ArrayList list : arrayList) {
+                Log.d(LOG_TAG, "New list will be send!");
+                parentActivity.addToMovieVideosAdapter(list);
+            }
+        }
     }
 }

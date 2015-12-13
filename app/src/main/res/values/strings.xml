@@ -52,5 +52,6 @@
     <string name="fragment_detail_button_text_marked">Marked as favorite</string>
     <string name="fragment_detail_trailers_text">Trailers:</string>
     <string name="fragment_detail_reviews_text">Reviews:</string>
+    <string name="fragment_detail_list_videos_text">Play:</string>
 
 </resources>

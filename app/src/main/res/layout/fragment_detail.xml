@@ -95,7 +95,7 @@
             android:id="@+id/detail_movie_videos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/detail_movie_trailers_text_view"/>
+            android:layout_below="@id/detail_movie_trailers_text_view" />
 
         <TextView
             android:id="@+id/detail_movie_reviews_text_view"
