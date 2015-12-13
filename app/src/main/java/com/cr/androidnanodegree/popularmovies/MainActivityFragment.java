@@ -1,7 +1,7 @@
 package com.cr.androidnanodegree.popularmovies;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +33,7 @@ public class MainActivityFragment extends Fragment
     public ProgressDialog mProgressDialog;
     protected String mStoredSortByPreference;
     protected Boolean mStoredExtraInformationPreference;
+    protected Callback mActivity;
 
     protected final static String[] MOVIES_PROJECTION = {
             MovieContract.FavoritesEntry._ID,
@@ -54,7 +55,21 @@ public class MainActivityFragment extends Fragment
     static final int COL_RELEASE_DATE = 6;
     static final int COL_BACKDROP_PATH = 7;
 
+    public interface Callback {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void OnItemSelected(Uri favoritesUri);
+        public void OnItemSelected(MovieInformation movieInformation);
+    }
+
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (Callback) getActivity();
     }
 
     @Override
@@ -94,13 +109,16 @@ public class MainActivityFragment extends Fragment
                     new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            MovieInformation movieInformation = mMovieInformationAdapter.getItem(position);
-                            Intent intent = new Intent(getContext(), DetailActivity.class)
-                                    .putExtra(
-                                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
-                                            movieInformation
-                                    );
-                            startActivity(intent);
+                            MovieInformation movieInformation =
+                                    mMovieInformationAdapter.getItem(position);
+                            mActivity.OnItemSelected(movieInformation);
+//                            TODO Remove if two pane fragments works
+//                            Intent intent = new Intent(getContext(), DetailActivity.class)
+//                                    .putExtra(
+//                                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
+//                                            movieInformation
+//                                    );
+//                            startActivity(intent);
                         }
                     }
             );
@@ -116,9 +134,11 @@ public class MainActivityFragment extends Fragment
                                 long movieId = cursor.getLong(COL_MOVIE_ID);
                                 Uri favoritesUri =
                                         MovieContract.FavoritesEntry.buildFavoritesUri(movieId);
-                                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                        .setData(favoritesUri);
-                                startActivity(intent);
+                                mActivity.OnItemSelected(favoritesUri);
+//                                TODO Remove if two pane fragments works
+//                                Intent intent = new Intent(getActivity(), DetailActivity.class)
+//                                        .setData(favoritesUri);
+//                                startActivity(intent);
                             }
                         }
                     }

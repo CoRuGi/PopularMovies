@@ -1,12 +1,16 @@
 package com.cr.androidnanodegree.popularmovies;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MainActivityFragment.Callback {
 
     protected boolean mTwoPane;
     protected static final String DETAIL_FRAGMENT_TAG = "DFTAG";
@@ -15,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
@@ -52,5 +56,50 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnItemSelected(Uri favoritesUri) {
+        DetailActivityFragment detailActivityFragment =
+                DetailActivityFragment.newInstance(favoritesUri);
+        if (mTwoPane) {
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(
+                    R.id.movie_detail_container, detailActivityFragment, DETAIL_FRAGMENT_TAG
+            );
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        } else {
+            Intent intent = new Intent(getApplicationContext(), DetailActivity.class)
+                    .setData(favoritesUri);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void OnItemSelected(MovieInformation movieInformation) {
+        if (mTwoPane) {
+            Intent intent = new Intent(getApplicationContext(), DetailActivityFragment.class)
+                    .putExtra(
+                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
+                            movieInformation
+                    );
+            setIntent(intent);
+            FragmentTransaction fragmentTransaction =
+                    getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(
+                    R.id.movie_detail_container, new DetailActivityFragment(), DETAIL_FRAGMENT_TAG
+            );
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        } else {
+            Intent intent = new Intent(getApplicationContext(), DetailActivity.class)
+                    .putExtra(
+                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
+                            movieInformation
+                    );
+            startActivity(intent);
+        }
     }
 }
