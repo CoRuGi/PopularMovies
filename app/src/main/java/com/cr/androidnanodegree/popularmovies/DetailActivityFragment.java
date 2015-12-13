@@ -44,6 +44,7 @@ public class DetailActivityFragment extends Fragment
     protected MovieInformation movieInformation;
     protected Uri mUri;
     protected MovieVideosAdapter mMovieVideosAdapter;
+    protected MovieReviewsAdapter mMovieReviewsAdapter;
 
     protected ImageView posterView;
     protected ImageView backgroundView;
@@ -107,6 +108,9 @@ public class DetailActivityFragment extends Fragment
             FetchMovieVideosTask movieVideosTask = new FetchMovieVideosTask(this);
             movieVideosTask.execute(Integer.parseInt(movieInformation.getId()));
 
+            FetchMovieReviewsTask movieReviewsTask = new FetchMovieReviewsTask(this);
+            movieReviewsTask.execute(Integer.parseInt(movieInformation.getId()));
+
             titleView.setText(movieInformation.getTitle());
             yearView.setText(movieInformation.getYearFromReleaseDate());
             averageView.setText(movieInformation.getVoteAverage());
@@ -148,6 +152,25 @@ public class DetailActivityFragment extends Fragment
                         String key = arrayList.get(FetchMovieVideosTask.MOVIE_KEY).toString();
                         Uri youtubeLocation = Uri.parse("https://www.youtube.com/watch?v=" + key);
                         Intent intent = new Intent(Intent.ACTION_VIEW, youtubeLocation);
+                        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                }
+        );
+
+        mMovieReviewsAdapter = new MovieReviewsAdapter(
+                getContext(), R.layout.list_item_reviews, new ArrayList<ArrayList>()
+        );
+        reviewsView.setAdapter(mMovieReviewsAdapter);
+        reviewsView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        ArrayList arrayList = mMovieReviewsAdapter.getItem(position);
+                        String url = arrayList.get(FetchMovieReviewsTask.REVIEW_URL).toString();
+                        Uri reviewLocation = Uri.parse(url);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, reviewLocation);
                         if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                             startActivity(intent);
                         }
@@ -263,11 +286,16 @@ public class DetailActivityFragment extends Fragment
 
             FetchMovieDetailTask movieDetailTask = new FetchMovieDetailTask(this);
             movieDetailTask.execute(Integer.parseInt(
-                    data.getString(MainActivityFragment.COL_MOVIE_ID))
+                            data.getString(MainActivityFragment.COL_MOVIE_ID))
             );
 
             FetchMovieVideosTask movieVideosTask = new FetchMovieVideosTask(this);
             movieVideosTask.execute(
+                    Integer.parseInt(data.getString(MainActivityFragment.COL_MOVIE_ID))
+            );
+
+            FetchMovieReviewsTask movieReviewsTask = new FetchMovieReviewsTask(this);
+            movieReviewsTask.execute(
                     Integer.parseInt(data.getString(MainActivityFragment.COL_MOVIE_ID))
             );
         }
@@ -280,5 +308,14 @@ public class DetailActivityFragment extends Fragment
 
     public void clearMovieVideosAdapter() {
         mMovieVideosAdapter.clear();
+    }
+
+    public void addToMovieReviewsAdapter(ArrayList arraylist) {
+        Log.d(LOG_TAG, "New Review will be added!");
+        mMovieReviewsAdapter.add(arraylist);
+    }
+
+    public void clearMovieReviewsAdapter() {
+        mMovieReviewsAdapter.clear();
     }
 }
