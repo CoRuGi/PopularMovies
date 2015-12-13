@@ -275,6 +275,18 @@ public class DetailActivityFragment extends Fragment
             // Read synopsis from cursor
             synopsisView.setText(data.getString(MainActivityFragment.COL_MOVIE_SYNOPSIS));
 
+            // Put the values into the movieInformation for the button
+            movieInformation = new MovieInformation();
+            movieInformation.setId(data.getString((MainActivityFragment.COL_MOVIE_ID)));
+            movieInformation.setTitle(data.getString(MainActivityFragment.COL_MOVIE_TITLE));
+            movieInformation.setPoster(bitmap);
+            movieInformation.setSynopsis(data.getString(MainActivityFragment.COL_MOVIE_SYNOPSIS));
+            movieInformation.setVoteAverage(data.getString(MainActivityFragment.COL_VOTE_AVERAGE));
+            movieInformation.setReleaseDate(data.getString(MainActivityFragment.COL_RELEASE_DATE));
+            movieInformation.setBackdropPath(
+                    data.getString(MainActivityFragment.COL_BACKDROP_PATH)
+            );
+
             //URL posterUrl = new ImageUrlProvider().getImageUrl(movieInformation.getPosterPath());
             URL backgroundUrl = new ImageUrlProvider("w780").getImageUrl(
                     data.getString(MainActivityFragment.COL_BACKDROP_PATH)
