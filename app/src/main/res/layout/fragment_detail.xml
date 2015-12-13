@@ -94,7 +94,7 @@
         <ListView
             android:id="@+id/detail_movie_videos"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_below="@id/detail_movie_trailers_text_view" />
 
         <TextView
@@ -108,7 +108,7 @@
         <ListView
             android:id="@+id/detail_movie_reviews"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_below="@id/detail_movie_reviews_text_view"/>
 
     </RelativeLayout>
