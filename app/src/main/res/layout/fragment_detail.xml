@@ -10,7 +10,8 @@
         android:id="@+id/detail_movie_title"
         style="@style/MovieDetailTitle"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/movie_detail_title" />
+        android:layout_height="@dimen/movie_detail_title"
+        android:singleLine="true" />
 
     <ScrollView
         android:layout_width="match_parent"
