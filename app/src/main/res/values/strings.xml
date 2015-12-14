@@ -48,10 +48,15 @@
     <string name="pref_extrainformation_label">Extra Information</string>
     <!-- Ley name for storing extra information in SharePreferences [CHAR LIMIT=NONE] -->
     <string name="pref_extrainformation_key" translate="false">extrainformation</string>
+
+    <!-- Labels for the DetailFragment -->
     <string name="fragment_detail_button_text">Mark as favorite</string>
     <string name="fragment_detail_button_text_marked">Marked as favorite</string>
     <string name="fragment_detail_trailers_text">Trailers:</string>
     <string name="fragment_detail_reviews_text">Reviews:</string>
     <string name="fragment_detail_list_videos_text">Play:</string>
+
+    <!-- Description for the trailers icon -->
+    <string name="movie_detail_video_play_image">Play movie icon</string>
 
 </resources>
