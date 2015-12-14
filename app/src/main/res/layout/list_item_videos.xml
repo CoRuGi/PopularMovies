@@ -7,6 +7,7 @@
     android:orientation="horizontal">
 
     <ImageView
+        style="@style/MovieDetailLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:contentDescription="@string/movie_detail_video_play_image"

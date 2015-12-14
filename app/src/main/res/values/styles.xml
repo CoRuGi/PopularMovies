@@ -75,7 +75,11 @@
         <item name="android:textSize">@dimen/movie_detail_text_view_year</item>
     </style>
 
-    <style name="MovieDetailReviewLinearLayout" parent="MovieDetail">
+    <style name="MovieDetailLinearLayout" parent="MovieDetail">
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
+    <style name="MovieDetailReviewLinearLayout" parent="MovieDetailLinearLayout">
         <item name="android:paddingBottom">@dimen/movie_detail_padding</item>
     </style>
     
