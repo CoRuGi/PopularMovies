@@ -167,6 +167,14 @@ public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList<Arr
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (arrayList != null) {
+
+            parentActivity.mTrailerUrl = "https://www.youtube.com/watch?v=" +
+                    arrayList.get(0).get(MOVIE_KEY);
+            if (parentActivity.mShareActionProvider != null) {
+                parentActivity.mShareActionProvider.
+                        setShareIntent(parentActivity.createShareTrailerIntent());
+            }
+
             for (ArrayList list : arrayList) {
                 View view = layoutInflater.inflate(
                         R.layout.list_item_videos, null

@@ -59,4 +59,7 @@
     <!-- Description for the trailers icon -->
     <string name="movie_detail_video_play_image">Play movie icon</string>
 
+    <!-- Label for the share option in DetailFragment -->
+    <string name="action_share">Share</string>
+
 </resources>

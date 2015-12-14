@@ -12,8 +12,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,9 +41,13 @@ public class DetailActivityFragment extends Fragment
 
     private final static String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     protected static final int DETAIL_LOADER = 0;
+    protected static final String SHARE_TEXT = "You should see this trailer. " +
+            "It's amazing. When are you available?" + System.getProperty("line.separator");
 
     public static final String MOVIE_INFORMATION_EXTRA = "MovieInformation";
     public static final String DETAIL_URI = "detail_uri";
+    public String mTrailerUrl;
+    public ShareActionProvider mShareActionProvider;
 
     protected MovieInformation movieInformation;
     protected Uri mUri;
@@ -55,6 +64,7 @@ public class DetailActivityFragment extends Fragment
     protected LinearLayout reviewsView;
 
     public DetailActivityFragment() {
+        setHasOptionsMenu(true);
     }
 
     public static DetailActivityFragment newInstance(Uri favoriteUri) {
@@ -118,13 +128,6 @@ public class DetailActivityFragment extends Fragment
             //URL posterUrl = new ImageUrlProvider().getImageUrl(movieInformation.getPosterPath());
             URL backgroundUrl = new ImageUrlProvider("w780").getImageUrl(movieInformation.getBackdropPath());
 
-            // TODO Remove if getPoster works better
-            /*
-            Glide.with(getContext())
-                    .load(posterUrl.toString())
-                    .override(550, 825)
-                    .into(posterView);
-            */
             posterView.setImageBitmap(movieInformation.getPoster());
 
             Glide.with(getContext())
@@ -143,49 +146,33 @@ public class DetailActivityFragment extends Fragment
                 getContext(), R.layout.list_item_videos, new ArrayList<ArrayList>()
         );
 
-        // TODO Remove if listView is successful
-        /*
-        videosView.setAdapter(mMovieVideosAdapter);
-        videosView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        ArrayList arrayList = mMovieVideosAdapter.getItem(position);
-                        String key = arrayList.get(FetchMovieVideosTask.MOVIE_KEY).toString();
-                        Uri youtubeLocation = Uri.parse("https://www.youtube.com/watch?v=" + key);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, youtubeLocation);
-                        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                    }
-                }
-        );
-        */
-
         mMovieReviewsAdapter = new MovieReviewsAdapter(
                 getContext(), R.layout.list_item_reviews, new ArrayList<ArrayList>()
         );
 
-        // TODO Remove if listView is successful
-        /*
-        reviewsView.setAdapter(mMovieReviewsAdapter);
-        reviewsView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        ArrayList arrayList = mMovieReviewsAdapter.getItem(position);
-                        String url = arrayList.get(FetchMovieReviewsTask.REVIEW_URL).toString();
-                        Uri reviewLocation = Uri.parse(url);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, reviewLocation);
-                        if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                    }
-                }
-        );
-        */
-
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_detail_fragment, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+        if (mTrailerUrl != null) {
+            mShareActionProvider.setShareIntent(createShareTrailerIntent());
+        }
+    }
+
+    protected Intent createShareTrailerIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                SHARE_TEXT + mTrailerUrl);
+        return shareIntent;
     }
 
     public void onMarkAsFavoriteClick(View view) {
