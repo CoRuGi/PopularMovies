@@ -113,10 +113,11 @@
 
             <LinearLayout
                 android:id="@+id/detail_movie_reviews"
-                style="@style/MovieDetail"
+                style="@style/MovieDetailReviewLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:layout_below="@id/detail_movie_reviews_text_view"/>
 
         </RelativeLayout>
 

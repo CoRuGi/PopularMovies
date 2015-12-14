@@ -74,6 +74,10 @@
         <item name="android:paddingRight">@dimen/movie_detail_padding</item>
         <item name="android:textSize">@dimen/movie_detail_text_view_year</item>
     </style>
+
+    <style name="MovieDetailReviewLinearLayout" parent="MovieDetail">
+        <item name="android:paddingBottom">@dimen/movie_detail_padding</item>
+    </style>
     
     <!-- Number of grids on a small screen -->
     <style name="FragmentMainGridView">

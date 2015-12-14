@@ -1,7 +1,14 @@
 package com.cr.androidnanodegree.popularmovies;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -145,11 +152,39 @@ public class FetchMovieReviewsTask extends AsyncTask<Integer, Void, ArrayList<Ar
 
     @Override
     protected void onPostExecute(ArrayList<ArrayList> arrayList) {
+        LinearLayout linearLayout =
+                (LinearLayout) parentActivity.getActivity().findViewById(R.id.detail_movie_reviews);
+        LayoutInflater layoutInflater = (LayoutInflater) parentActivity.getActivity()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (arrayList != null) {
-            parentActivity.clearMovieReviewsAdapter();
             for (ArrayList list : arrayList) {
-                Log.d(LOG_TAG, "New review list will be send!");
-                parentActivity.addToMovieReviewsAdapter(list);
+                View view = layoutInflater.inflate(
+                        R.layout.list_item_reviews, null
+                );
+                TextView authorTextView =
+                        (TextView) view.findViewById(R.id.detail_movie_list_review_author);
+                TextView contentTextView =
+                        (TextView) view.findViewById(R.id.detail_movie_list_review_content);
+                authorTextView.setText((String) list.get(REVIEW_AUTHOR));
+                contentTextView.setText((String) list.get(REVIEW_CONTENT));
+                final String url = (String) list.get(REVIEW_URL);
+
+                view.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Uri reviewLocation = Uri.parse(url);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, reviewLocation);
+                                if (intent.resolveActivity(
+                                        parentActivity.getActivity().getPackageManager()) != null) {
+                                    parentActivity.startActivity(intent);
+                                }
+                            }
+                        }
+                );
+
+                linearLayout.addView(view);
             }
         }
     }
