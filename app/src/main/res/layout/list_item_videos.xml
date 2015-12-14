@@ -6,11 +6,12 @@
     android:clickable="true"
     android:orientation="horizontal">
 
-    <TextView
-        style="@style/MovieDetailListItemTitle"
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/fragment_detail_list_videos_text" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/movie_detail_video_play_image"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_play_circle_outline_black_24dp" />
 
     <TextView
         android:id="@+id/detail_movie_list_video_name"
