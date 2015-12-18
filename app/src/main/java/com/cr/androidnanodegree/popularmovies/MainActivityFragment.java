@@ -78,15 +78,8 @@ public class MainActivityFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Store the settings to know if they changed during our lifecycle
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mStoredSortByPreference = sharedPreferences.getString(
-                getString(R.string.pref_sortby_key),
-                getString(R.string.pref_sortby_most_popular)
-        );
-        mStoredExtraInformationPreference = sharedPreferences.getBoolean(
-                getString(R.string.pref_extrainformation_key),
-                true
-        );
+        mStoredSortByPreference = Utility.getSortByPreference(getContext());
+        mStoredExtraInformationPreference = Utility.getExtraInformationPreference(getContext());
 
         mMovieInformationAdapter = new MovieInformationAdapter(
                 getContext(), R.layout.grid_item_movie, new ArrayList<MovieInformation>()

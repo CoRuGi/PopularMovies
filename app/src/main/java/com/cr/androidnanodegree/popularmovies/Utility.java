@@ -45,4 +45,12 @@ public class Utility {
                 context.getString(R.string.pref_extrainformation_key), true);
     }
 
+    public static String getSortByPreference(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(
+                context.getString(R.string.pref_sortby_key),
+                context.getString(R.string.pref_sortby_most_popular)
+        );
+    }
 }
