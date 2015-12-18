@@ -45,14 +45,6 @@ public class MovieInformationAdapter extends ArrayAdapter<MovieInformation> {
         convertView.setTag(ratingTextView);
         convertView.setTag(yearTextView);
 
-        /* TODO remove if getPoster works better
-        URL posterUrl = new ImageUrlProvider().getImageUrl(movieInformation.getPosterPath());
-
-        Glide.with(context)
-                .load(posterUrl.toString())
-                .override(550, 825)
-                .into(imageView);
-        */
         imageView.setImageBitmap(movieInformation.getPoster());
         ratingTextView.setText(movieInformation.getVoteAverage());
         yearTextView.setText(movieInformation.getYearFromReleaseDate());

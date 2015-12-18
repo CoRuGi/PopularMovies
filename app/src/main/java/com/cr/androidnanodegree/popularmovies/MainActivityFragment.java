@@ -112,13 +112,6 @@ public class MainActivityFragment extends Fragment
                             MovieInformation movieInformation =
                                     mMovieInformationAdapter.getItem(position);
                             mActivity.OnItemSelected(movieInformation);
-//                            TODO Remove if two pane fragments works
-//                            Intent intent = new Intent(getContext(), DetailActivity.class)
-//                                    .putExtra(
-//                                            DetailActivityFragment.MOVIE_INFORMATION_EXTRA,
-//                                            movieInformation
-//                                    );
-//                            startActivity(intent);
                         }
                     }
             );
@@ -135,10 +128,6 @@ public class MainActivityFragment extends Fragment
                                 Uri favoritesUri =
                                         MovieContract.FavoritesEntry.buildFavoritesUri(movieId);
                                 mActivity.OnItemSelected(favoritesUri);
-//                                TODO Remove if two pane fragments works
-//                                Intent intent = new Intent(getActivity(), DetailActivity.class)
-//                                        .setData(favoritesUri);
-//                                startActivity(intent);
                             }
                         }
                     }
