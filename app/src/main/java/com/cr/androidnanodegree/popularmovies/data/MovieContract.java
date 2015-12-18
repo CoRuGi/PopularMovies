@@ -18,6 +18,7 @@ public class MovieContract {
 
     // Possible paths
     public static final String PATH_FAVORITES = "favorites";
+    public static final String PATH_LASTREQUESTED = "lastrequested";
 
     public static final class FavoritesEntry implements BaseColumns {
 
@@ -60,6 +61,51 @@ public class MovieContract {
         }
 
         public static long getFavoritesIdFromUri(Uri uri) {
+            return Long.parseLong(uri.getPathSegments().get(1));
+        }
+    }
+
+    public static final class LastRequestedEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONENT_URI.buildUpon().appendEncodedPath(PATH_LASTREQUESTED).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
+                        PATH_LASTREQUESTED;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
+                        PATH_LASTREQUESTED;
+
+        // Table name
+        public static final String TABLE_NAME = "last_requested";
+
+        // ID of the movie
+        public static final String COLUMN_MOVIE_ID = "movie_id";
+
+        // Title of the movie
+        public static final String COLUMN_MOVIE_TITLE = "movie_title";
+
+        // Path to the poster
+        public static final String COLUMN_POSTER = "poster";
+
+        // Synopsis of the movie
+        public static final String COLUMN_MOVIE_SYNOPSIS = "movie_synopsis";
+
+        // Vote average of the movie
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
+
+        // Release date of the movie
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+
+        // Path to the backdrop
+        public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
+
+        public static Uri buildFavoritesUri(long movieId) {
+            return ContentUris.withAppendedId(CONTENT_URI, movieId);
+        }
+
+        public static long getLastRequestedIdFromUri(Uri uri) {
             return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
