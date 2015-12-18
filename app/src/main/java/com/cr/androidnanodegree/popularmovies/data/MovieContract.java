@@ -18,7 +18,7 @@ public class MovieContract {
 
     // Possible paths
     public static final String PATH_FAVORITES = "favorites";
-    public static final String PATH_LASTREQUESTED = "lastrequested";
+    public static final String PATH_LAST_REQUESTED = "lastrequested";
 
     public static final class FavoritesEntry implements BaseColumns {
 
@@ -68,14 +68,14 @@ public class MovieContract {
     public static final class LastRequestedEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
-                BASE_CONENT_URI.buildUpon().appendEncodedPath(PATH_LASTREQUESTED).build();
+                BASE_CONENT_URI.buildUpon().appendEncodedPath(PATH_LAST_REQUESTED).build();
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
-                        PATH_LASTREQUESTED;
+                        PATH_LAST_REQUESTED;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" +
-                        PATH_LASTREQUESTED;
+                        PATH_LAST_REQUESTED;
 
         // Table name
         public static final String TABLE_NAME = "last_requested";

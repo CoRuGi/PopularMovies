@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cr.androidnanodegree.popularmovies.data.MovieContract.FavoritesEntry;
+import com.cr.androidnanodegree.popularmovies.data.MovieContract.LastRequestedEntry;
 
 /**
  * Manages a local database for favorites data.
@@ -34,7 +35,21 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                         FavoritesEntry.COLUMN_BACKDROP_PATH + " TEXT NOT NULL" +
                         " );";
 
+        // Create the table to hold favorites.
+        final String SQL_CREATE_LAST_REQUESTED_TABLE =
+                "CREATE TABLE " + LastRequestedEntry.TABLE_NAME + " (" +
+                        LastRequestedEntry._ID + " INTEGER PRIMARY KEY, " +
+                        LastRequestedEntry.COLUMN_MOVIE_ID + " REAL UNIQUE NOT NULL, " +
+                        LastRequestedEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
+                        LastRequestedEntry.COLUMN_POSTER + " BLOB NOT NULL, " +
+                        LastRequestedEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL, " +
+                        LastRequestedEntry.COLUMN_VOTE_AVERAGE + " TEXT NOT NULL, " +
+                        LastRequestedEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                        LastRequestedEntry.COLUMN_BACKDROP_PATH + " TEXT NOT NULL" +
+                        " );";
+
         db.execSQL(SQL_CREATE_FAVORITES_TABLE);
+        db.execSQL(SQL_CREATE_LAST_REQUESTED_TABLE);
     }
 
     @Override
