@@ -19,6 +19,8 @@ public class MovieProvider extends ContentProvider {
 
     static final int FAVORITES = 100;
     static final int FAVORITES_ID = 101;
+    static final int LAST_REQUESTED = 200;
+    static final int LAST_REQUESTED_ID = 201;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -26,6 +28,8 @@ public class MovieProvider extends ContentProvider {
 
         uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES, FAVORITES);
         uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES + "/#", FAVORITES_ID);
+        uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES, LAST_REQUESTED);
+        uriMatcher.addURI(authority, MovieContract.PATH_FAVORITES + "/#", LAST_REQUESTED_ID);
 
         return uriMatcher;
     }
@@ -46,6 +50,10 @@ public class MovieProvider extends ContentProvider {
                 return MovieContract.FavoritesEntry.CONTENT_TYPE;
             case FAVORITES_ID:
                 return MovieContract.FavoritesEntry.CONTENT_ITEM_TYPE;
+            case LAST_REQUESTED:
+                return MovieContract.LastRequestedEntry.CONTENT_TYPE;
+            case LAST_REQUESTED_ID:
+                return MovieContract.LastRequestedEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -80,6 +88,29 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case LAST_REQUESTED: {
+                returnCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.LastRequestedEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null, null,
+                        sortOrder
+                );
+                break;
+            }
+            case LAST_REQUESTED_ID: {
+                long id = MovieContract.FavoritesEntry.getFavoritesIdFromUri(uri);
+                returnCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.LastRequestedEntry.TABLE_NAME,
+                        projection,
+                        MovieContract.LastRequestedEntry.COLUMN_MOVIE_ID + "= ?",
+                        new String[] {Long.toString(id)},
+                        null, null,
+                        sortOrder
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -98,6 +129,15 @@ public class MovieProvider extends ContentProvider {
                 long _id = db.insert(MovieContract.FavoritesEntry.TABLE_NAME, null, values);
                 if (_id > 0) {
                     returnUri = MovieContract.FavoritesEntry.buildFavoritesUri(_id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            }
+            case LAST_REQUESTED: {
+                long _id = db.insert(MovieContract.LastRequestedEntry.TABLE_NAME, null, values);
+                if (_id > 0) {
+                    returnUri = MovieContract.LastRequestedEntry.buildFavoritesUri(_id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -123,6 +163,12 @@ public class MovieProvider extends ContentProvider {
                 );
                 break;
             }
+            case LAST_REQUESTED: {
+                updatedRows = db.update(
+                        MovieContract.LastRequestedEntry.TABLE_NAME, values, selection, selectionArgs
+                );
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unkown uri: " + uri);
         }
@@ -144,6 +190,12 @@ public class MovieProvider extends ContentProvider {
             case FAVORITES: {
                 deletedRows = db.delete(
                         MovieContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs
+                );
+                break;
+            }
+            case LAST_REQUESTED: {
+                deletedRows = db.delete(
+                        MovieContract.LastRequestedEntry.TABLE_NAME, selection, selectionArgs
                 );
                 break;
             }
