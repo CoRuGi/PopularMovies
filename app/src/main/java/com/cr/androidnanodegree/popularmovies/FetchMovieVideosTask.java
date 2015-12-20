@@ -168,11 +168,13 @@ public class FetchMovieVideosTask extends AsyncTask<Integer, Void, ArrayList<Arr
 
         if (arrayList != null) {
 
-            parentActivity.mTrailerUrl = "https://www.youtube.com/watch?v=" +
-                    arrayList.get(0).get(MOVIE_KEY);
-            if (parentActivity.mShareActionProvider != null) {
-                parentActivity.mShareActionProvider.
-                        setShareIntent(parentActivity.createShareTrailerIntent());
+            if (arrayList.size() >= 1) {
+                parentActivity.mTrailerUrl = "https://www.youtube.com/watch?v=" +
+                        arrayList.get(0).get(MOVIE_KEY);
+                if (parentActivity.mShareActionProvider != null) {
+                    parentActivity.mShareActionProvider.
+                            setShareIntent(parentActivity.createShareTrailerIntent());
+                }
             }
 
             for (ArrayList list : arrayList) {

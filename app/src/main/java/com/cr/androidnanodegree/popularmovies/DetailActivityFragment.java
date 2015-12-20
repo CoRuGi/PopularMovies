@@ -48,6 +48,7 @@ public class DetailActivityFragment extends Fragment
     public static final String DETAIL_URI = "detail_uri";
     public String mTrailerUrl;
     public ShareActionProvider mShareActionProvider;
+    public MenuItem mMenuItem;
 
     protected MovieInformation movieInformation;
     protected Uri mUri;
@@ -157,9 +158,10 @@ public class DetailActivityFragment extends Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_detail_fragment, menu);
 
-        MenuItem menuItem = menu.findItem(R.id.action_share);
+        mMenuItem = menu.findItem(R.id.action_share);
+        mMenuItem.setVisible(false);
 
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(mMenuItem);
 
         if (mTrailerUrl != null) {
             mShareActionProvider.setShareIntent(createShareTrailerIntent());
@@ -172,6 +174,7 @@ public class DetailActivityFragment extends Fragment
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT,
                 SHARE_TEXT + mTrailerUrl);
+        mMenuItem.setVisible(true);
         return shareIntent;
     }
 
@@ -206,7 +209,7 @@ public class DetailActivityFragment extends Fragment
 
         Bitmap poster = movieInformation.getPoster();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        poster.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        poster.compress(Bitmap.CompressFormat.JPEG, 50, stream);
         values.put(FavoritesEntry.COLUMN_POSTER, stream.toByteArray());
 
         getContext().getContentResolver().insert(FavoritesEntry.CONTENT_URI, values);

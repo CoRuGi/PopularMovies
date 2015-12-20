@@ -1,22 +1,25 @@
 package com.cr.androidnanodegree.popularmovies;
 
+import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.cr.androidnanodegree.popularmovies.data.MovieContract.LastRequestedEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -24,7 +27,7 @@ import java.util.concurrent.ExecutionException;
  * <p/>
  * Fetch the movies from the themoviesdb.org website
  */
-public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, ArrayList<MovieInformation>> {
+public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Vector<ContentValues>> {
 
     MainActivityFragment parentActivity;
 
@@ -35,7 +38,7 @@ public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Arra
     protected final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     @Override
-    protected ArrayList<MovieInformation> doInBackground(FetchMovieTaskRequest... requests) {
+    protected Vector<ContentValues> doInBackground(FetchMovieTaskRequest... requests) {
 
         String line;
 
@@ -116,8 +119,7 @@ public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Arra
         return null;
     }
 
-    private ArrayList<MovieInformation> getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
-        ArrayList<MovieInformation> movies;
+    private Vector<ContentValues> getMoviesDataFromJson(String moviesJsonStr) throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
         final String OWM_RESULTS = "results";
@@ -133,19 +135,17 @@ public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Arra
         JSONObject moviesJson = new JSONObject(moviesJsonStr);
         JSONArray moviesArray = moviesJson.getJSONArray(OWM_RESULTS);
 
-        movies = new ArrayList<>();
+        Vector<ContentValues> contentValuesVector = new Vector<ContentValues>(moviesArray.length());
 
         for (int i = 0; i < moviesArray.length(); i++) {
             JSONObject movie = moviesArray.getJSONObject(i);
 
-            MovieInformation movieInformation = new MovieInformation();
-            movieInformation.setId(movie.getString(OWM_ID));
-            movieInformation.setTitle(movie.getString(OWM_TITLE));
-            movieInformation.setPosterPath(movie.getString(OWM_POSTER_PATH));
-            movieInformation.setSynopsis(movie.getString(OWM_SYNOPSIS));
-            movieInformation.setReleaseDate(movie.getString(OWM_RELEASE_DATE));
-            movieInformation.setVoteAverage(movie.getString(OWM_VOTE_AVERAGE));
-            movieInformation.setBackdropPath(movie.getString(OWM_BACKDROP_PATH));
+            String movieId      = movie.getString(OWM_ID);
+            String title        = movie.getString(OWM_TITLE);
+            String synopsis     = movie.getString(OWM_SYNOPSIS);
+            String releaseDate  = movie.getString(OWM_RELEASE_DATE);
+            String voteAverage  = movie.getString(OWM_VOTE_AVERAGE);
+            String backdropPath = movie.getString(OWM_BACKDROP_PATH);
 
             URL posterUrl = new ImageUrlProvider().getImageUrl(movie.getString(OWM_POSTER_PATH));
 
@@ -163,22 +163,47 @@ public class FetchMoviesTask extends AsyncTask<FetchMovieTaskRequest, Void, Arra
                 bitmap = null;
             }
 
-            movieInformation.setPoster(bitmap);
+            ContentValues movieValues = new ContentValues();
 
-            movies.add(movieInformation);
+            movieValues.put(LastRequestedEntry.COLUMN_MOVIE_ID, movieId);
+            movieValues.put(LastRequestedEntry.COLUMN_MOVIE_TITLE, title);
+            movieValues.put(LastRequestedEntry.COLUMN_MOVIE_SYNOPSIS, synopsis);
+            movieValues.put(LastRequestedEntry.COLUMN_VOTE_AVERAGE, voteAverage);
+            movieValues.put(LastRequestedEntry.COLUMN_RELEASE_DATE, releaseDate);
+            movieValues.put(LastRequestedEntry.COLUMN_BACKDROP_PATH, backdropPath);
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            if (bitmap != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+            }
+            movieValues.put(LastRequestedEntry.COLUMN_POSTER, stream.toByteArray());
+
+            contentValuesVector.add(movieValues);
         }
 
-        return movies;
+        return contentValuesVector;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<MovieInformation> movieInformations) {
+    protected void onPostExecute(Vector<ContentValues> movieInformations) {
+        int inserted = 0;
         if (movieInformations != null) {
-            parentActivity.clearMovieInformationAdapter();
-            for (MovieInformation movie : movieInformations) {
-                parentActivity.addToMovieInformationAdapter(movie);
-            }
+
+            parentActivity.getContext().getContentResolver().delete(
+                    LastRequestedEntry.CONTENT_URI, null, null
+            );
+
+            ContentValues[] contentValuesArray = new ContentValues[movieInformations.size()];
+            movieInformations.toArray(contentValuesArray);
+            inserted = parentActivity.getContext().getContentResolver().bulkInsert(
+                    LastRequestedEntry.CONTENT_URI,
+                    contentValuesArray
+            );
         }
-        parentActivity.mProgressDialog.dismiss();
+        if (parentActivity.mProgressDialog != null) {
+            parentActivity.mProgressDialog.dismiss();
+        }
+
+        Log.d(LOG_TAG, "FetchMovieTask Complete. " + inserted + " Inserted");
     }
 }

@@ -2,24 +2,25 @@ package com.cr.androidnanodegree.popularmovies;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.cr.androidnanodegree.popularmovies.data.MovieContract;
-
-import java.util.ArrayList;
 
 /**
  * Fragment to show the poster grid view
@@ -27,13 +28,18 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    protected static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     protected static final int MOVIES_LOADER = 0;
+    protected static final String SELECTED_KEY = "storedPosition";
+
     public MovieInformationAdapter mMovieInformationAdapter;
     public MovieInformationCursorAdapter mMovieInformationCursorAdapter;
     public ProgressDialog mProgressDialog;
     protected String mStoredSortByPreference;
     protected Boolean mStoredExtraInformationPreference;
     protected Callback mActivity;
+    protected int mPosition;
+    protected GridView mGridView;
 
     protected final static String[] MOVIES_PROJECTION = {
             MovieContract.FavoritesEntry._ID,
@@ -60,7 +66,12 @@ public class MainActivityFragment extends Fragment
          * Callback for when an item has been selected.
          */
         public void OnItemSelected(Uri favoritesUri);
+
         public void OnItemSelected(MovieInformation movieInformation);
+
+        public void setStoredSortByPreference(String sortByPreference);
+
+        public String getStoredSortByPreference();
     }
 
     public MainActivityFragment() {
@@ -77,67 +88,69 @@ public class MainActivityFragment extends Fragment
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Store the settings to know if they changed during our lifecycle
-        mStoredSortByPreference = Utility.getSortByPreference(getContext());
+        if (mActivity.getStoredSortByPreference() != null) {
+            mStoredSortByPreference = mActivity.getStoredSortByPreference();
+        } else {
+            mStoredSortByPreference = Utility.getSortByPreference(getContext());
+//            mActivity.setStoredSortByPreference(Utility.getSortByPreference(getContext()));
+        }
         mStoredExtraInformationPreference = Utility.getExtraInformationPreference(getContext());
 
-        mMovieInformationAdapter = new MovieInformationAdapter(
-                getContext(), R.layout.grid_item_movie, new ArrayList<MovieInformation>()
-        );
         mMovieInformationCursorAdapter = new MovieInformationCursorAdapter(
                 getContext(), null, 0
         );
 
         // Fill the GridView with the data
-        GridView gridView = (GridView) rootView.findViewById(
+        mGridView = (GridView) rootView.findViewById(
                 R.id.gridview_movies
         );
+        mGridView.setAdapter(mMovieInformationCursorAdapter);
 
-        // When SortBy is set to favorites we need to set the ArrayAdaptor or the cursor adapter
-        if (!mStoredSortByPreference.equals(getString(R.string.pref_sortby_favorites))) {
-            gridView.setAdapter(mMovieInformationAdapter);
-
-            // When a movie is selected start the DetailActivity
-            gridView.setOnItemClickListener(
-                    new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            MovieInformation movieInformation =
-                                    mMovieInformationAdapter.getItem(position);
-                            mActivity.OnItemSelected(movieInformation);
-                        }
-                    }
-            );
-        } else {
-            gridView.setAdapter(mMovieInformationCursorAdapter);
-
-            gridView.setOnItemClickListener(
-                    new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                            if (cursor != null) {
-                                long movieId = cursor.getLong(COL_MOVIE_ID);
-                                Uri favoritesUri =
+        mGridView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                        if (cursor != null) {
+                            long movieId = cursor.getLong(COL_MOVIE_ID);
+                            Uri uri;
+                            if (Utility.getSortByPreference(getContext()).equals(
+                                    getString(R.string.pref_sortby_favorites))) {
+                                uri =
                                         MovieContract.FavoritesEntry.buildFavoritesUri(movieId);
-                                mActivity.OnItemSelected(favoritesUri);
+                            } else {
+                                uri =
+                                        MovieContract.LastRequestedEntry.buildFavoritesUri(movieId);
                             }
+                            mActivity.OnItemSelected(uri);
                         }
+                        mPosition = position;
                     }
-            );
+                }
+        );
+
+        if (null != savedInstanceState && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
 
         return rootView;
     }
 
-    public void updateMoviesGrid() {
-        mProgressDialog = new ProgressDialog(getContext());
-        mProgressDialog.setMessage("Loading movies...");
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setProgress(0);
-        mProgressDialog.setMax(100);
-        mProgressDialog.show();
+    void onSortByChanged() {
+        String sortByPreference = Utility.getSortByPreference(getContext());
+        if (!sortByPreference.equals(getString(R.string.pref_sortby_favorites))) {
+            if (!isNetworkAvailable()) {
+                Log.d(LOG_TAG, "No network connection.");
+                String msg = "Network connection is needed to get the Latest Movies";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            updateMoviesGrid();
+        }
+        getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
+    }
 
+    public void updateMoviesGrid() {
         // Get the API key from ApiKeyProvider
         String apiKey = ApiKeyProvider.getApiKey();
 
@@ -149,11 +162,7 @@ public class MainActivityFragment extends Fragment
         request.setPage(1);
 
         // Get the sort preference from the settings
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String sortByPreference = sharedPreferences.getString(
-                getString(R.string.pref_sortby_key),
-                getString(R.string.pref_sortby_most_popular)
-        );
+        String sortByPreference = Utility.getSortByPreference(getContext());
         request.setSortBy(sortByPreference);
 
         // Fetch the movie information from themoviedb.org
@@ -162,65 +171,91 @@ public class MainActivityFragment extends Fragment
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // Get the preferences to see if they have changed
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String sortByPreference = sharedPreferences.getString(
-                getString(R.string.pref_sortby_key),
-                getString(R.string.pref_sortby_most_popular)
-        );
-        Boolean extraInformationPreference = sharedPreferences.getBoolean(
-                getString(R.string.pref_extrainformation_key),
-                true
-        );
-
-        // If the SortBy Favorites Setting is selected we need to use the CursorLoader
-        if (sortByPreference.equals("favorites")) {
-            getLoaderManager().initLoader(MOVIES_LOADER, null, this);
-            return;
-        }
-
-        // If the mMovieInformationAdapter is already filled we don't need to update it
-        if (mMovieInformationAdapter.getCount() <= 2) {
-            updateMoviesGrid();
-        }
-
-        // If one of the settings has changed we need to call updateMoviesGrid
-        if (!sortByPreference.equals(mStoredSortByPreference) ||
-                !mStoredExtraInformationPreference.equals(extraInformationPreference)
-                ) {
-            updateMoviesGrid();
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIES_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
-    public void addToMovieInformationAdapter(MovieInformation movieInformation) {
-        mMovieInformationAdapter.add(movieInformation);
-    }
-
-    public void clearMovieInformationAdapter() {
-        mMovieInformationAdapter.clear();
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPosition != GridView.INVALID_POSITION) {
+            outState.putInt(SELECTED_KEY, mPosition);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = MovieContract.FavoritesEntry.CONTENT_URI;
+        String sortByPreference = Utility.getSortByPreference(getContext());
+        if (sortByPreference.equals(getString(R.string.pref_sortby_favorites))) {
+            Log.d(LOG_TAG, "Favorites will be requested from the database.");
+            Uri uri = MovieContract.FavoritesEntry.CONTENT_URI;
 
-        return new CursorLoader(getContext(),
-                uri,
-                MOVIES_PROJECTION,
-                null, null, null
-        );
+            return new CursorLoader(getContext(),
+                    uri,
+                    MOVIES_PROJECTION,
+                    null, null, null
+            );
+        } else {
+            Log.d(LOG_TAG, "Last requested will be requested from the database.");
+            Uri uri = MovieContract.LastRequestedEntry.CONTENT_URI;
+
+            return new CursorLoader(
+                    getContext(),
+                    uri,
+                    MOVIES_PROJECTION,
+                    null, null, null
+            );
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mMovieInformationCursorAdapter.swapCursor(data);
+        String sortByPreference = Utility.getSortByPreference(getContext());
+        if (data.moveToFirst()) {
+            Log.d(LOG_TAG, "Retrieved data from the database.");
+            mMovieInformationCursorAdapter.swapCursor(data);
+            if (mPosition != ListView.INVALID_POSITION) {
+                mGridView.smoothScrollToPosition(mPosition);
+            }
+        } else {
+            Log.d(LOG_TAG, "No data was available in the database.");
+            Log.d(LOG_TAG, "sortByPreference is: " + sortByPreference);
+
+            if (sortByPreference.equals(getString(R.string.pref_sortby_favorites))) {
+                Log.d(LOG_TAG, "No favorites stored.");
+                String msg = "No favorites are saved.";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                mMovieInformationCursorAdapter.swapCursor(null);
+                return;
+            }
+
+            if (!isNetworkAvailable()) {
+                Log.d(LOG_TAG, "No network connection.");
+                String msg = "Network connection is needed to get the Latest movies";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage("Loading movies...");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.setProgress(0);
+            mProgressDialog.setMax(100);
+            mProgressDialog.show();
+            updateMoviesGrid();
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieInformationCursorAdapter.swapCursor(null);
+    }
 
+    protected boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

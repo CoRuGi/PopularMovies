@@ -6,17 +6,21 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements MainActivityFragment.Callback {
 
+    protected static final String LOG_TAG = MainActivity.class.getSimpleName();
+    protected String mStoredSortByPreference;
     protected boolean mTwoPane;
     protected static final String DETAIL_FRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mStoredSortByPreference = Utility.getSortByPreference(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -32,6 +36,24 @@ public class MainActivity extends AppCompatActivity
             }
         } else {
             mTwoPane = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "MainActivity onResume called.");
+        String sortByPreference = Utility.getSortByPreference(this);
+        Log.d(LOG_TAG, "Current sortByPreference is " + sortByPreference);
+        Log.d(LOG_TAG, "Stored sortByPreference is " + mStoredSortByPreference);
+
+        if (sortByPreference != null && !sortByPreference.equals(mStoredSortByPreference)) {
+            MainActivityFragment mainActivityFragment = (MainActivityFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.fragment);
+            if (null != mainActivityFragment) {
+                mainActivityFragment.onSortByChanged();
+            }
+            mStoredSortByPreference = sortByPreference;
         }
     }
 
@@ -59,9 +81,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnItemSelected(Uri favoritesUri) {
+    public void OnItemSelected(Uri uri) {
         DetailActivityFragment detailActivityFragment =
-                DetailActivityFragment.newInstance(favoritesUri);
+                DetailActivityFragment.newInstance(uri);
         if (mTwoPane) {
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
@@ -72,7 +94,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
         } else {
             Intent intent = new Intent(getApplicationContext(), DetailActivity.class)
-                    .setData(favoritesUri);
+                    .setData(uri);
             startActivity(intent);
         }
     }
@@ -101,5 +123,33 @@ public class MainActivity extends AppCompatActivity
                     );
             startActivity(intent);
         }
+    }
+
+    @Override
+    public String getStoredSortByPreference() {
+        return mStoredSortByPreference;
+    }
+
+    @Override
+    public void setStoredSortByPreference(String sortByPreference) {
+        mStoredSortByPreference = sortByPreference;
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(LOG_TAG, "MainActivity onPause called.");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(LOG_TAG, "MainActivity onStop called.");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(LOG_TAG, "MainActivity onDestroy called.");
+        super.onDestroy();
     }
 }
